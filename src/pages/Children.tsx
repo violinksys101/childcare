@@ -3,21 +3,58 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
+import { Modal } from '@/components/ui/Modal'
+import { ChildForm } from '@/components/forms/ChildForm'
 import { Plus, Search, Edit, Eye } from 'lucide-react'
-import { mockChildren } from '@/data/mockData'
+import { mockChildren as initialChildren } from '@/data/mockData'
+import { Child } from '@/types'
 import { calculateAge, formatDate } from '@/lib/utils'
 
 export function Children() {
+  const [children, setChildren] = useState<Child[]>(initialChildren)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingChild, setEditingChild] = useState<Child | undefined>()
 
-  const filteredChildren = mockChildren.filter(child => {
+  const filteredChildren = children.filter(child => {
     const matchesSearch = child.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          child.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          child.parentName.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || child.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  const handleAddChild = () => {
+    setEditingChild(undefined)
+    setIsModalOpen(true)
+  }
+
+  const handleEditChild = (child: Child) => {
+    setEditingChild(child)
+    setIsModalOpen(true)
+  }
+
+  const handleSubmitChild = (data: Partial<Child>) => {
+    if (editingChild) {
+      // Update existing child
+      setChildren(prev => prev.map(child => 
+        child.id === editingChild.id 
+          ? { ...child, ...data }
+          : child
+      ))
+    } else {
+      // Add new child
+      const newChild: Child = {
+        id: Date.now().toString(),
+        parentId: Date.now().toString(),
+        enrollmentDate: new Date().toISOString().split('T')[0],
+        ...data
+      } as Child
+      setChildren(prev => [...prev, newChild])
+    }
+    setIsModalOpen(false)
+  }
 
   return (
     <div className="space-y-6">
@@ -26,7 +63,7 @@ export function Children() {
           <h1 className="text-3xl font-bold text-gray-900">Children Management</h1>
           <p className="text-gray-600 mt-2">Manage child profiles, enrollment, and information</p>
         </div>
-        <Button>
+        <Button onClick={handleAddChild}>
           <Plus className="h-4 w-4 mr-2" />
           Add New Child
         </Button>
@@ -113,7 +150,7 @@ export function Children() {
                   <Eye className="h-4 w-4 mr-1" />
                   View
                 </Button>
-                <Button size="sm" variant="outline" className="flex-1">
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => handleEditChild(child)}>
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
                 </Button>
@@ -135,14 +172,14 @@ export function Children() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-3xl font-bold text-primary-600">{mockChildren.length}</p>
+            <p className="text-3xl font-bold text-primary-600">{children.length}</p>
             <p className="text-sm text-gray-600 mt-1">Total Children</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-success-600">
-              {mockChildren.filter(c => c.status === 'active').length}
+              {children.filter(c => c.status === 'active').length}
             </p>
             <p className="text-sm text-gray-600 mt-1">Active Enrollments</p>
           </CardContent>
@@ -150,12 +187,25 @@ export function Children() {
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-warning-600">
-              {mockChildren.filter(c => c.status === 'inactive').length}
+              {children.filter(c => c.status === 'inactive').length}
             </p>
             <p className="text-sm text-gray-600 mt-1">Inactive</p>
           </CardContent>
         </Card>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingChild ? 'Edit Child' : 'Add New Child'}
+        className="max-w-2xl"
+      >
+        <ChildForm
+          child={editingChild}
+          onSubmit={handleSubmitChild}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </div>
   )
 }

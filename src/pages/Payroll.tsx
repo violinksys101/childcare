@@ -51,10 +51,10 @@ export function Payroll() {
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Pay Period:</label>
-            <select 
+            <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
             >
               <option value="Jan 1-15, 2024">Jan 1-15, 2024</option>
               <option value="Dec 16-31, 2023">Dec 16-31, 2023</option>

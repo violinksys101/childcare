@@ -3,21 +3,58 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
+import { Modal } from '@/components/ui/Modal'
+import { ParentForm } from '@/components/forms/ParentForm'
 import { Plus, Search, Edit, Eye, Phone, Mail, MapPin } from 'lucide-react'
-import { mockParents, mockChildren } from '@/data/mockData'
+import { mockParents as initialParents, mockChildren } from '@/data/mockData'
+import { Parent } from '@/types'
 import { formatCurrency } from '@/lib/utils'
 
 export function Parents() {
+  const [parents, setParents] = useState<Parent[]>(initialParents)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'current' | 'overdue' | 'paid'>('all')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingParent, setEditingParent] = useState<Parent | undefined>()
 
-  const filteredParents = mockParents.filter(parent => {
+  const filteredParents = parents.filter(parent => {
     const matchesSearch = parent.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          parent.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          parent.email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || parent.billingStatus === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  const handleAddParent = () => {
+    setEditingParent(undefined)
+    setIsModalOpen(true)
+  }
+
+  const handleEditParent = (parent: Parent) => {
+    setEditingParent(parent)
+    setIsModalOpen(true)
+  }
+
+  const handleSubmitParent = (data: Partial<Parent>) => {
+    if (editingParent) {
+      // Update existing parent
+      setParents(prev => prev.map(parent => 
+        parent.id === editingParent.id 
+          ? { ...parent, ...data }
+          : parent
+      ))
+    } else {
+      // Add new parent
+      const newParent: Parent = {
+        id: Date.now().toString(),
+        children: [],
+        totalDue: 0,
+        ...data
+      } as Parent
+      setParents(prev => [...prev, newParent])
+    }
+    setIsModalOpen(false)
+  }
 
   const getChildrenNames = (childrenIds: string[]) => {
     return childrenIds.map(id => {
@@ -33,7 +70,7 @@ export function Parents() {
           <h1 className="text-3xl font-bold text-gray-900">Parent Management</h1>
           <p className="text-gray-600 mt-2">Manage parent profiles, contact information, and billing</p>
         </div>
-        <Button>
+        <Button onClick={handleAddParent}>
           <Plus className="h-4 w-4 mr-2" />
           Add New Parent
         </Button>
@@ -143,7 +180,7 @@ export function Parents() {
                   <Eye className="h-4 w-4 mr-1" />
                   View
                 </Button>
-                <Button size="sm" variant="outline" className="flex-1">
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => handleEditParent(parent)}>
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
                 </Button>
@@ -165,14 +202,14 @@ export function Parents() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-3xl font-bold text-primary-600">{mockParents.length}</p>
+            <p className="text-3xl font-bold text-primary-600">{parents.length}</p>
             <p className="text-sm text-gray-600 mt-1">Total Parents</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-success-600">
-              {mockParents.filter(p => p.billingStatus === 'current').length}
+              {parents.filter(p => p.billingStatus === 'current').length}
             </p>
             <p className="text-sm text-gray-600 mt-1">Current</p>
           </CardContent>
@@ -180,7 +217,7 @@ export function Parents() {
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-danger-600">
-              {mockParents.filter(p => p.billingStatus === 'overdue').length}
+              {parents.filter(p => p.billingStatus === 'overdue').length}
             </p>
             <p className="text-sm text-gray-600 mt-1">Overdue</p>
           </CardContent>
@@ -188,12 +225,25 @@ export function Parents() {
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-3xl font-bold text-warning-600">
-              {formatCurrency(mockParents.reduce((sum, p) => sum + p.totalDue, 0))}
+              {formatCurrency(parents.reduce((sum, p) => sum + p.totalDue, 0))}
             </p>
             <p className="text-sm text-gray-600 mt-1">Total Outstanding</p>
           </CardContent>
         </Card>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingParent ? 'Edit Parent' : 'Add New Parent'}
+        className="max-w-2xl"
+      >
+        <ParentForm
+          parent={editingParent}
+          onSubmit={handleSubmitParent}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </div>
   )
 }
