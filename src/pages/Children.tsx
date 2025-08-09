@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
 import { ChildForm } from '@/components/forms/ChildForm'
 import { Plus, Search, Edit, Eye } from 'lucide-react'
-import { mockChildren as initialChildren } from '@/data/mockData'
+import { mockChildren as initialChildren, mockReferrals } from '@/data/mockData'
 import { Child } from '@/types'
 import { calculateAge, formatDate } from '@/lib/utils'
 
@@ -54,6 +54,12 @@ export function Children() {
       setChildren(prev => [...prev, newChild])
     }
     setIsModalOpen(false)
+  }
+
+  const getReferralName = (referralId?: string) => {
+    if (!referralId) return 'Direct enrollment'
+    const referral = mockReferrals.find(r => r.id === referralId)
+    return referral ? referral.name : 'Unknown referral'
   }
 
   return (
@@ -144,6 +150,10 @@ export function Children() {
               <div>
                 <p className="text-sm font-medium text-gray-700">Emergency Contact</p>
                 <p className="text-sm text-gray-600">{child.emergencyContact}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-700">Referred By</p>
+                <p className="text-sm text-gray-600">{getReferralName(child.referralId)}</p>
               </div>
               <div className="flex gap-2 pt-3">
                 <Button size="sm" variant="outline" className="flex-1">

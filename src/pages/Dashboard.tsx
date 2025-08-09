@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Users, Baby, UserCheck, DollarSign, TrendingUp, Calendar } from 'lucide-react'
-import { mockChildren, mockParents, mockAttendance, mockTransactions } from '@/data/mockData'
+import { mockChildren, mockParents, mockAttendance, mockTransactions, mockReferrals } from '@/data/mockData'
 import { formatCurrency } from '@/lib/utils'
 
 export function Dashboard() {
@@ -10,6 +10,7 @@ export function Dashboard() {
   const activeChildren = mockChildren.filter(child => child.status === 'active').length
   const totalParents = mockParents.length
   const presentToday = mockAttendance.filter(record => record.status === 'present').length
+  const totalReferrals = mockReferrals.reduce((sum, r) => sum + r.totalReferrals, 0)
   
   const monthlyRevenue = mockTransactions
     .filter(t => t.type === 'income' && t.status === 'completed')
@@ -53,6 +54,7 @@ export function Dashboard() {
   const recentActivities = [
     { id: 1, activity: 'Emma Johnson checked in', time: '8:00 AM', type: 'check-in' },
     { id: 2, activity: 'New parent registration: Michael Smith', time: '9:30 AM', type: 'registration' },
+    { id: 2.5, activity: 'New referral from Sunshine Elementary School', time: '9:45 AM', type: 'referral' },
     { id: 3, activity: 'Payment received from Sarah Johnson', time: '10:15 AM', type: 'payment' },
     { id: 4, activity: 'Staff meeting scheduled for 2:00 PM', time: '11:00 AM', type: 'meeting' },
   ]
@@ -137,7 +139,8 @@ export function Dashboard() {
                     variant={
                       activity.type === 'check-in' ? 'success' :
                       activity.type === 'payment' ? 'default' :
-                      activity.type === 'registration' ? 'secondary' : 'warning'
+                      activity.type === 'registration' ? 'secondary' :
+                      activity.type === 'referral' ? 'default' : 'warning'
                     }
                   >
                     {activity.type}
