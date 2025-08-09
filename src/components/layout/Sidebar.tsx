@@ -8,7 +8,8 @@ import {
   DollarSign, 
   Calculator,
   Baby,
-  Settings
+  Settings,
+  UserPlus
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +17,7 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Children', href: '/children', icon: Baby },
   { name: 'Parents', href: '/parents', icon: Users },
+  { name: 'Referrals', href: '/referrals', icon: UserPlus },
   { name: 'Attendance', href: '/attendance', icon: UserCheck },
   { name: 'Payroll', href: '/payroll', icon: DollarSign },
   { name: 'Accounting', href: '/accounting', icon: Calculator },

@@ -1,4 +1,5 @@
 import { Child, Parent, AttendanceRecord, StaffAttendance, PayrollRecord, Transaction, Invoice } from '@/types'
+import { Referral } from '@/types'
 
 export const mockChildren: Child[] = [
   {
@@ -11,7 +12,8 @@ export const mockChildren: Child[] = [
     program: 'Full Day Care',
     status: 'active',
     emergencyContact: '(555) 123-4567',
-    enrollmentDate: '2023-01-15'
+    enrollmentDate: '2023-01-15',
+    referralId: '1'
   },
   {
     id: '2',
@@ -23,7 +25,8 @@ export const mockChildren: Child[] = [
     program: 'Half Day Care',
     status: 'active',
     emergencyContact: '(555) 234-5678',
-    enrollmentDate: '2023-02-01'
+    enrollmentDate: '2023-02-01',
+    referralId: '2'
   },
   {
     id: '3',
@@ -35,7 +38,8 @@ export const mockChildren: Child[] = [
     program: 'After School',
     status: 'active',
     emergencyContact: '(555) 345-6789',
-    enrollmentDate: '2022-09-01'
+    enrollmentDate: '2022-09-01',
+    referralId: '1'
   }
 ]
 
@@ -216,5 +220,52 @@ export const mockInvoices: Invoice[] = [
     items: [
       { description: 'Full Day Care - February', quantity: 1, rate: 800, amount: 800 }
     ]
+  }
+]
+
+export const mockReferrals: Referral[] = [
+  {
+    id: '1',
+    name: 'Sunshine Elementary School',
+    type: 'institution',
+    contactPerson: 'Ms. Patricia Williams',
+    email: 'patricia.williams@sunshine-elem.edu',
+    phone: '(555) 987-6543',
+    address: '456 Education Blvd, Learning City, ST 12345',
+    website: 'www.sunshine-elementary.edu',
+    referredChildren: ['1', '3'],
+    totalReferrals: 2,
+    dateAdded: '2022-08-15',
+    notes: 'Long-standing partnership. They refer families needing after-school care.',
+    status: 'active'
+  },
+  {
+    id: '2',
+    name: 'Dr. Maria Rodriguez',
+    type: 'individual',
+    contactPerson: 'Dr. Maria Rodriguez',
+    email: 'maria.rodriguez@pediatrics.com',
+    phone: '(555) 456-7890',
+    address: '789 Medical Center Dr, Health City, ST 12345',
+    referredChildren: ['2'],
+    totalReferrals: 1,
+    dateAdded: '2023-01-20',
+    notes: 'Pediatrician who refers families with special care needs.',
+    status: 'active'
+  },
+  {
+    id: '3',
+    name: 'Community Health Center',
+    type: 'institution',
+    contactPerson: 'John Thompson',
+    email: 'john.thompson@communityhc.org',
+    phone: '(555) 321-0987',
+    address: '123 Community Ave, Wellness Town, ST 12345',
+    website: 'www.communityhealthcenter.org',
+    referredChildren: [],
+    totalReferrals: 0,
+    dateAdded: '2023-03-10',
+    notes: 'New partnership established. Potential for future referrals.',
+    status: 'active'
   }
 ]

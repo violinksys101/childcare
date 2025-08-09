@@ -18,6 +18,7 @@ export interface Child {
   emergencyContact: string;
   medicalInfo?: string;
   enrollmentDate: string;
+  referralId?: string;
 }
 
 export interface Parent {
@@ -97,4 +98,20 @@ export interface InvoiceItem {
   quantity: number;
   rate: number;
   amount: number;
+}
+
+export interface Referral {
+  id: string;
+  name: string;
+  type: 'institution' | 'individual';
+  contactPerson?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  website?: string;
+  referredChildren: string[];
+  totalReferrals: number;
+  dateAdded: string;
+  notes?: string;
+  status: 'active' | 'inactive';
 }
