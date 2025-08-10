@@ -1,9 +1,12 @@
 import React from 'react'
-import { Bell, Search, User } from 'lucide-react'
+import { Bell, Search, User, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useAuth } from '@/components/auth/AuthProvider'
 
 export function Header() {
+  const { user, logout } = useAuth()
+
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center flex-1 max-w-md">
@@ -27,10 +30,13 @@ export function Header() {
         
         <div className="flex items-center space-x-3">
           <div className="text-right">
-            <p className="text-sm font-medium text-gray-900">Admin User</p>
-            <p className="text-xs text-gray-500">Administrator</p>
+            <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+            <p className="text-xs text-gray-500 capitalize">{user?.role?.replace('_', ' ')}</p>
           </div>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={logout} title="Logout">
+            <LogOut className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" title="Profile">
             <User className="h-5 w-5" />
           </Button>
         </div>

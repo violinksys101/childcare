@@ -13,7 +13,15 @@ export const mockChildren: Child[] = [
     status: 'active',
     emergencyContact: '(555) 123-4567',
     enrollmentDate: '2023-01-15',
-    referralId: '1'
+    referralId: '1',
+    homeLocation: {
+      id: '1',
+      name: 'Johnson Family Home',
+      address: '123 Main St, Anytown, ST 12345',
+      latitude: 40.7128,
+      longitude: -74.0060,
+      radius: 100
+    }
   },
   {
     id: '2',
@@ -26,7 +34,15 @@ export const mockChildren: Child[] = [
     status: 'active',
     emergencyContact: '(555) 234-5678',
     enrollmentDate: '2023-02-01',
-    referralId: '2'
+    referralId: '2',
+    homeLocation: {
+      id: '2',
+      name: 'Smith Family Home',
+      address: '456 Oak Ave, Anytown, ST 12345',
+      latitude: 40.7589,
+      longitude: -73.9851,
+      radius: 100
+    }
   },
   {
     id: '3',
@@ -39,7 +55,15 @@ export const mockChildren: Child[] = [
     status: 'active',
     emergencyContact: '(555) 345-6789',
     enrollmentDate: '2022-09-01',
-    referralId: '1'
+    referralId: '1',
+    homeLocation: {
+      id: '3',
+      name: 'Brown Family Home',
+      address: '789 Pine Rd, Anytown, ST 12345',
+      latitude: 40.7505,
+      longitude: -73.9934,
+      radius: 100
+    }
   }
 ]
 

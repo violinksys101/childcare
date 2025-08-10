@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
 import { Calendar, Clock, MapPin, Users, UserCheck, Plus } from 'lucide-react'
 import { mockAttendance, mockStaffAttendance } from '@/data/mockData'
+import { useAuth } from '@/components/auth/AuthProvider'
 
 export function Attendance() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<'children' | 'staff'>('children')
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
 
@@ -39,6 +41,11 @@ export function Attendance() {
       total: mockStaffAttendance.length
     }
   }
+
+  // Field workers can only see their assigned children
+  const filteredAttendance = user?.role === 'field_worker' 
+    ? mockAttendance.filter(record => user.assignedChildren?.includes(record.childId))
+    : mockAttendance
 
   return (
     <div className="space-y-6">
@@ -135,7 +142,7 @@ export function Attendance() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockAttendance.map((record) => (
+              {filteredAttendance.map((record) => (
                 <div key={record.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                   <div className="flex-1">
                     <h3 className="font-medium text-gray-900">{record.childName}</h3>

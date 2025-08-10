@@ -4,6 +4,17 @@ export interface User {
   email: string;
   role: 'admin' | 'caregiver' | 'accountant' | 'field_worker' | 'parent';
   avatar?: string;
+  assignedChildren?: string[];
+  allowedLocations?: Location[];
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  radius: number; // in meters
 }
 
 export interface Child {
@@ -19,6 +30,7 @@ export interface Child {
   medicalInfo?: string;
   enrollmentDate: string;
   referralId?: string;
+  homeLocation?: Location;
 }
 
 export interface Parent {

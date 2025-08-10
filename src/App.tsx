@@ -1,5 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider, useAuth } from './components/auth/AuthProvider'
+import { LoginForm } from './components/auth/LoginForm'
+import { LocationAuth } from './components/auth/LocationAuth'
 import { Layout } from './components/layout/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { Children } from './pages/Children'
@@ -9,7 +12,29 @@ import { Attendance } from './pages/Attendance'
 import { Payroll } from './pages/Payroll'
 import { Accounting } from './pages/Accounting'
 
-function App() {
+function AppContent() {
+  const { user, isAuthenticated, setLocationVerified } = useAuth()
+
+  // Show login form if not authenticated
+  if (!user) {
+    return <LoginForm />
+  }
+
+  // Show location verification for field workers
+  if (user.role === 'field_worker' && !isAuthenticated) {
+    return (
+      <LocationAuth
+        user={user}
+        onAuthSuccess={() => setLocationVerified(true)}
+        onAuthFailure={(error) => {
+          console.error('Location auth failed:', error)
+          // Could show error message or redirect
+        }}
+      />
+    )
+  }
+
+  // Show main app if authenticated and location verified (if needed)
   return (
     <Router>
       <Routes>
@@ -24,6 +49,14 @@ function App() {
         </Route>
       </Routes>
     </Router>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 
