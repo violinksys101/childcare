@@ -3,14 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
+import { Modal } from '@/components/ui/Modal'
+import { LocationTimeIn } from '@/components/attendance/LocationTimeIn'
 import { Calendar, Clock, MapPin, Users, UserCheck, Plus } from 'lucide-react'
-import { mockAttendance, mockStaffAttendance } from '@/data/mockData'
+import { mockAttendance, mockStaffAttendance, mockChildren } from '@/data/mockData'
 import { useAuth } from '@/components/auth/AuthProvider'
+import { Location } from '@/types'
 
 export function Attendance() {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<'children' | 'staff'>('children')
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
+  const [isTimeInModalOpen, setIsTimeInModalOpen] = useState(false)
+  const [timeInMessage, setTimeInMessage] = useState('')
+  const [timeInSuccess, setTimeInSuccess] = useState(false)
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -47,6 +53,31 @@ export function Attendance() {
     ? mockAttendance.filter(record => user.assignedChildren?.includes(record.childId))
     : mockAttendance
 
+  const handleTimeInClick = () => {
+    if (user?.role === 'field_worker') {
+      setIsTimeInModalOpen(true)
+      setTimeInMessage('')
+      setTimeInSuccess(false)
+    }
+  }
+
+  const handleTimeInSuccess = (childId: string, location: Location) => {
+    const child = mockChildren.find(c => c.id === childId)
+    const childName = child ? `${child.firstName} ${child.lastName}` : 'Unknown Child'
+    
+    setTimeInMessage(`Successfully timed in at ${childName}'s location (${location.name})`)
+    setTimeInSuccess(true)
+    
+    // Auto-close modal after 3 seconds
+    setTimeout(() => {
+      setIsTimeInModalOpen(false)
+    }, 3000)
+  }
+
+  const handleTimeInFailure = (error: string) => {
+    setTimeInMessage(error)
+    setTimeInSuccess(false)
+  }
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -54,9 +85,9 @@ export function Attendance() {
           <h1 className="text-3xl font-bold text-gray-900">Attendance Management</h1>
           <p className="text-gray-600 mt-2">Track daily attendance for children and staff</p>
         </div>
-        <Button>
+        <Button onClick={handleTimeInClick}>
           <Plus className="h-4 w-4 mr-2" />
-          Mark Attendance
+          {user?.role === 'field_worker' ? 'Time In' : 'Mark Attendance'}
         </Button>
       </div>
 
@@ -227,6 +258,50 @@ export function Attendance() {
           </CardContent>
         </Card>
       )}
+
+      {/* Location-Based Time In Modal */}
+      <Modal
+        isOpen={isTimeInModalOpen}
+        onClose={() => setIsTimeInModalOpen(false)}
+        title="Location-Based Time In"
+        className="max-w-lg"
+      >
+        {timeInMessage ? (
+          <div className="text-center py-6">
+            <div className={`flex items-center justify-center space-x-2 mb-4 ${
+              timeInSuccess ? 'text-green-600' : 'text-red-600'
+            }`}>
+              {timeInSuccess ? (
+                <UserCheck className="h-8 w-8" />
+              ) : (
+                <MapPin className="h-8 w-8" />
+              )}
+            </div>
+            <p className={`text-lg font-medium ${
+              timeInSuccess ? 'text-green-800' : 'text-red-800'
+            }`}>
+              {timeInMessage}
+            </p>
+            {timeInSuccess && (
+              <p className="text-sm text-gray-600 mt-2">
+                Time recorded: {new Date().toLocaleTimeString()}
+              </p>
+            )}
+            <Button 
+              onClick={() => setIsTimeInModalOpen(false)}
+              className="mt-4"
+              variant={timeInSuccess ? 'default' : 'outline'}
+            >
+              Close
+            </Button>
+          </div>
+        ) : (
+          <LocationTimeIn
+            onTimeInSuccess={handleTimeInSuccess}
+            onTimeInFailure={handleTimeInFailure}
+          />
+        )}
+      </Modal>
     </div>
   )
 }

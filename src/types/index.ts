@@ -67,6 +67,8 @@ export interface StaffAttendance {
   location?: string;
   status: 'present' | 'absent' | 'late';
   hoursWorked: number;
+  timeInLocation?: Location;
+  verifiedLocation?: boolean;
 }
 
 export interface PayrollRecord {
