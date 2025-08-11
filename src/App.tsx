@@ -13,28 +13,14 @@ import { Payroll } from './pages/Payroll'
 import { Accounting } from './pages/Accounting'
 
 function AppContent() {
-  const { user, isAuthenticated, isLocationVerified, setLocationVerified } = useAuth()
+  const { user, isAuthenticated } = useAuth()
 
   // Show login form if not authenticated
   if (!user) {
     return <LoginForm />
   }
 
-  // Show location verification for field workers
-  if (user.role === 'field_worker' && !isLocationVerified) {
-    return (
-      <LocationAuth
-        user={user}
-        onAuthSuccess={() => setLocationVerified(true)}
-        onAuthFailure={(error) => {
-          console.error('Location auth failed:', error)
-          // Could show error message or redirect
-        }}
-      />
-    )
-  }
-
-  // Show main app if authenticated and location verified (if needed)
+  // Show main app if authenticated
   return (
     <Router>
       <Routes>

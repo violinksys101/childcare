@@ -26,7 +26,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
-  const [isLocationVerified, setIsLocationVerified] = useState(true)
+  const [isLocationVerified, setIsLocationVerified] = useState(false)
 
   // Mock users for demonstration
   const mockUsers: User[] = [
@@ -68,10 +68,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (foundUser && password === 'password') {
       setUser(foundUser)
       
-      // For non-field workers, automatically verify location
-      if (foundUser.role !== 'field_worker') {
-        setIsLocationVerified(true)
-      }
+      // All users can access dashboard, location verification only needed for specific actions
+      setIsLocationVerified(true)
       
       return true
     }
@@ -88,7 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLocationVerified(verified)
   }
 
-  const isAuthenticated = user !== null && (user.role !== 'field_worker' || isLocationVerified)
+  const isAuthenticated = user !== null
 
   return (
     <AuthContext.Provider value={{
