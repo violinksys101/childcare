@@ -21,7 +21,7 @@ function AppContent() {
   }
 
   // Show location verification for field workers
-  if (user.role === 'field_worker' && !isAuthenticated) {
+  if (user.role === 'field_worker' && !isLocationVerified) {
     return (
       <LocationAuth
         user={user}

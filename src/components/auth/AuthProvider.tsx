@@ -26,7 +26,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
-  const [isLocationVerified, setIsLocationVerified] = useState(false)
+  const [isLocationVerified, setIsLocationVerified] = useState(true)
 
   // Mock users for demonstration
   const mockUsers: User[] = [
