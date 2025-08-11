@@ -13,7 +13,7 @@ import { Payroll } from './pages/Payroll'
 import { Accounting } from './pages/Accounting'
 
 function AppContent() {
-  const { user, isAuthenticated, setLocationVerified } = useAuth()
+  const { user, isAuthenticated, isLocationVerified, setLocationVerified } = useAuth()
 
   // Show login form if not authenticated
   if (!user) {
